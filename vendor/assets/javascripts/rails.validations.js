@@ -325,28 +325,33 @@ var ClientSideValidations = {
       }
     }
   },
-  formBuilders: {
+  fformBuilders: {
     'ActionView::Helpers::FormBuilder': {
-      add: function (element, settings, message) {
-        if (element.data('valid') !== false && jQuery('label.message[for="' + element.attr('id') + '"]')[0] === undefined) {
-          var inputErrorField = jQuery(settings.input_tag),
-              labelErrorField = jQuery(settings.label_tag),
-              label = jQuery('label[for="' + element.attr('id') + '"]:not(.message)');
+      add: function(element, settings, message) {
+        if (element.data('valid') !== false && jQuery('label.validations_message[for="' + element.attr('id') + '"]')[0] == undefined) {
 
-          if (element.attr('autofocus')) { element.attr('autofocus', false); }
-          element.before(inputErrorField);
+            var formBeingValidated = element.closest("form")
+            var inputErrorField = jQuery(settings.input_tag),
+              labelErrorField = jQuery(settings.label_tag),
+              label = jQuery('label[for="' + element.attr('id') + '"]:not(.validations_message)', formBeingValidated);
+
+          if (element.attr('autofocus')) { element.attr('autofocus', false) };
+          label.after(inputErrorField);
           inputErrorField.find('span#input_tag').replaceWith(element);
-          inputErrorField.find('label.message').attr('for', element.attr('id'));
-          labelErrorField.find('label.message').attr('for', element.attr('id'));
+          inputErrorField.find('label.validations_message').attr('for', element.attr('id'));
+          labelErrorField.find('label.validations_message').attr('for', element.attr('id'));
           label.replaceWith(labelErrorField);
           labelErrorField.find('label#label_tag').replaceWith(label);
+          //label.toggle();
         }
-        jQuery('label.message[for="' + element.attr('id') + '"]').text(message);
+        jQuery('label.validations_message[for="' + element.attr('id') + '"]').text(message);
+
       },
-      remove: function (element, settings) {
-        var errorFieldClass = jQuery(settings.input_tag).attr('class'),
+      remove: function(element, settings) {
+          var formBeingValidated = element.closest("form")
+          var errorFieldClass = jQuery(settings.input_tag).attr('class'),
             inputErrorField = element.closest('.' + errorFieldClass),
-            label = jQuery('label[for="' + element.attr('id') + '"]:not(.message)'),
+            label = jQuery('label[for="' + element.attr('id') + '"]:not(.validations_message)', formBeingValidated),
             labelErrorField = label.closest('.' + errorFieldClass);
 
         if (inputErrorField[0]) {
@@ -354,10 +359,10 @@ var ClientSideValidations = {
           inputErrorField.replaceWith(element);
           label.detach();
           labelErrorField.replaceWith(label);
+          //label.toggle();
         }
       }
     },
-  },
   callbacks: {
     element: {
       after:  function (element, eventData)                    { },
