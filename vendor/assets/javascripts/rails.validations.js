@@ -325,7 +325,7 @@ var ClientSideValidations = {
       }
     }
   },
-  fformBuilders: {
+  formBuilders: {
     'ActionView::Helpers::FormBuilder': {
       add: function(element, settings, message) {
         if (element.data('valid') !== false && jQuery('label.validations_message[for="' + element.attr('id') + '"]')[0] == undefined) {
